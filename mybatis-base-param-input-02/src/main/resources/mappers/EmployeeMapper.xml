@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace等于mapper接口类的全限定名,这样实现对应 -->
+<mapper namespace="com.atguigu.mapper.EmployeeMapper">
+    <select id="queryById" resultType="com.atguigu.pojo.Employee">
+        select emp_id empId,emp_name empName,emp_salary empSalary
+            from t_emp where emp_id=#{id}
+        <!--
+       推荐，防止注入攻击 #{key}:占位符+赋值  emp_id=？  ？=赋值
+        ${key}:字符串拼接   "emp_id="+id
+        -->
+    </select>
+    <delete id="deleteById">
+        delete from t_emp where emp_id=#{salary}
+    </delete>
+    <select id="queryBySalary" resultType="com.atguigu.pojo.Employee">
+        select emp_id empId,emp_name empName.emp_salary empSalary
+        from t_emp where emp_salary=#{salary}
+    </select>
+    <!--传入的实体对象  key=属性名-->
+    <insert id="insertEmp">
+        insert into t_emp(emp_name,emp_salary) value(#{empName},#{empSalary});
+    </insert>
+    <!--
+    传入多个简单类型的数据如何取值
+    按照形参名称获取？不可以
+    方案一：注解指定@Param注解，指定多个简单参数的key key=@Param("value值")
+    方案二：mybatis默认机制
+        arg0,arg1....形参左到右依次对应 arg0 arg1
+        (name,salary)name->key=arg0, salary->key=arg1
+    -->
+    <select id="queryByNameAndSalary" resultType="com.atguigu.pojo.Employee">
+        select emp_id empId,emp_name empName,emp_salary empSalary
+        from t_emp where emp_name=#{a}and emp_salary=#{b}
+    </select>
+    <!--
+    传入map怎么指定key的值
+    key=map的key即可
+    -->
+    <insert id="insertEmpMap">
+        insert into t_emp(emp_name,emp_salary) value(#{name},#{salary});
+    </insert>
+</mapper>
