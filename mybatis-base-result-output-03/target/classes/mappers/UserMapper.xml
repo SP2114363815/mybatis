@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace等于mapper接口类的全限定名,这样实现对应 -->
+<mapper namespace="com.atguigu.mapper.UserMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user(username, password)
+        VALUES(#{username}, #{password})
+    </insert>
+    <update id="update">
+        UPDATE user SET username=#{username}, password=#{password}
+        WHERE id=#{id}
+    </update>
+    <delete id="delete">
+        DELETE FROM user WHERE id=#{id}
+    </delete>
+    <select id="selectById" resultType="com.atguigu.pojo.User">
+        SELECT id, username, password FROM user WHERE id=#{id}
+    </select>
+    <select id="selectAll" resultType="com.atguigu.pojo.User">
+        SELECT id, username, password FROM user
+    </select>
+</mapper>

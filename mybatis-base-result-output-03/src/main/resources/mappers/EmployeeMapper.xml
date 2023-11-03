@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace等于mapper接口类的全限定名,这样实现对应 -->
+<mapper namespace="com.atguigu.mapper.EmployeeMapper">
+        <delete id="deleteById">
+            delete from t_emp where emp_id=#{id}
+        </delete>
+    <!--
+    场景一；返回单个简单类型如何指定，resultType的写法！返回值的数据类型！！
+    resultType语法：
+        类的全限定符号
+        别名简称
+    -->
+<!--    定义自己类的别名-->
+<!--    &ndash;&gt;-->
+<!--    <typeAliases>-->
+<!--        &lt;!&ndash;单独定义&ndash;&gt;-->
+<!--        &lt;!&ndash;        <typeAlias type="com.atguigu.pojo.Employee" alias="Employee"/>&ndash;&gt;-->
+<!--        &lt;!&ndash;批量定义,批量将包下的类给别名，别名就是类的首字母小写&ndash;&gt;-->
+<!--        <package name="com.atguigu.pojo"/>-->
+<!--    </typeAliases>-->
+        <select id="queryNameById" resultType="java.lang.String">
+            select emp_name from t_emp where emp_id=#{id}
+        </select>
+        <select id="querySalaryById" resultType="java.lang.Double">
+            select emp_salary from t_emp where emp_id=#{id}
+        </select>
+    <select id="queryById" resultType="com.atguigu.pojo.Employee">
+<!--        select emp_id empId,emp_name empName,emp_salary empSalary from t_emp where emp_id=#{id}-->
+        select * from t_emp where emp_id=#{id}
+    </select>
+<!--    当实体类没有可以使用接值的时候，我们可以使用map接受数据
+        key=查询的列
+        value=查询的值
+-->
+    <select id="selectEmpNameAndMaxSalary" resultType="map">
+        SELECT
+        emp_name 员工姓名,
+        emp_salary 员工工资,
+        (SELECT AVG(emp_salary) FROM t_emp) 部门平均工资
+        FROM t_emp WHERE emp_salary=(
+        SELECT MAX(emp_salary) FROM t_emp
+    </select>
+<!--    切记：返回值是集合，resultType不需要指定集合类型，只需要指定泛型即可-->
+    <select id="queryNameBySalary" resultType="string">
+        select emp_name from t_emp where emp_salary>#{salary}
+    </select>
+    <select id="queryAll" resultType="com.atguigu.pojo.Employee">
+        select*from t_emp;
+    </select>
+    <!--
+    场景5，主键回显，获取插入数据的主键
+        1，自增长主键回显MySQL auto_increment
+        int insertEmp(Employee employee);
+        useGeneratedKeys="true" 我们想要数据库自动增强的主键
+        keyColumn="emp_id" 主键列的值
+        keyProperty="empId" 接收主键列值的属性
+    -->
+    <insert id="insertEmp" useGeneratedKeys="true" keyColumn="emp_id" keyProperty="empId">
+        insert into t_emp(emp_name,emp_salary)
+        value(#{empName},#{empSalary});
+    </insert>
+</mapper>
