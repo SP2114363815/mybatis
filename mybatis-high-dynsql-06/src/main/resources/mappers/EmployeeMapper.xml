@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace等于mapper接口类的全限定名,这样实现对应 -->
+<mapper namespace="com.atguigu.mapper.EmployeeMapper">
+<!--    List<Employee> query(@Param("name") String name,@Param("salary") Double salary);
+        如果传入属性就判断相等，如果不传入，不加对应的条件
+        where
+        if 判断传入的参数，最终是否添加语句
+            test属性，内部做比较运算，最终true将标签内部的SQL语句进行拼接
+                                          false不拼接标签内部语句
+-->
+        <select id="query" resultType="Employee">
+            select *from t_emp
+            <where>
+            <if test="name!=null">
+            emp_name=#{name}
+            </if>
+            <if test="salary!=null and salary>100">
+            and emp_salary=#{salary}
+            </if>
+            </where>
+        </select>
+<!--    int update(Employee employee);-->
+    <update id="update">
+        update t_emp
+        <set>
+        <if test="empName !=null">
+            emp_name=#{empName},
+        </if>
+        <if test="empSalary">
+            emp_salary=#{empSalary}
+        </if>
+        </set>
+        where emp_id=#{empId}
+    </update>
+
+
+
+<!--    //根据id批量查询-->
+<!--    List<Employee>queryBatch(@Param("ids") List<Integer> ids);-->
+    <select id="queryBatch" resultType="com.atguigu.pojo.Employee">
+        select *form t_emp
+                        where emp_id in
+<!--                        遍历的数据 ollection="ids"/org0/list-->
+<!--                        open 遍历之前要追加的字符串-->
+<!--                        close结束需要添加的字符串-->
+<!--                        separator每次遍历的分割符号，如果是最后一次，不会追加-->
+<!--                        item获取每个遍历项-->
+                        <foreach collection="ids" open="(" separator="," close=")" item="id">
+<!--                            遍历的内容-->
+                            #{id}
+                        </foreach>
+    </select>
+<!--    //根据id批量删除-->
+<!--    int deleteBatch(@Param("ids")List<Integer> ids);-->
+    <delete id="deleteBatch">
+        delete from t_emp where in
+                        <foreach collection="ids" open="("  separator="," close=")" item="id">
+                            #{id}
+                        </foreach>
+    </delete>
+<!--    //根据id批量添加-->
+<!--    int insertBatch(@Param("employeeList")List<Employee> employeeList);-->
+    <insert id="insertBatch">
+        insert into t_emp(emp_name,emp_salary)
+                    values
+                    <foreach collection="employeeList" separator="," item="employee">
+                        (#{employee.empName},#{employee.empSalary})
+                    </foreach>
+    </insert>
+<!--    //根据id批量修改-->
+<!--    int updateBatch(@Param("employeeList") List<Employee> employeeList);-->
+<!--    如果一个标签涉及多个语句需要设置允许指定多语句?allowMultiQueries=true-->
+    <update id="updateBatch">
+        <foreach collection="employeeList" item="emp">
+            update t_emp set emp_name=#{emp.empName},emp_salary=#{emp.empSalary}
+            where emp_id=#{emp.empId};
+        </foreach>
+
+    </update>
+</mapper>
